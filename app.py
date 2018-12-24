@@ -1,8 +1,7 @@
 import re
 import json
-import webbrowser
 import urllib.request
-from flask import Flask, request, render_template
+from flask import Flask, redirect, request, render_template
 
 from settings import MAP_SERVER_HOST, TRIP_SERVER_HOST, TEST_POINTS
 
@@ -28,17 +27,20 @@ def build_map_url(map_server_host, geo_points):
 @app.route('/', methods=['GET', 'POST'])
 def input_points():
     if request.method == "POST":
-        geo_points = [re.split(r'[^0-9.-]', p) for p in request.form.to_dict().values()]
-        trip_url = build_trip_url(TRIP_SERVER_HOST, geo_points)
-        view_input_url = build_map_url(MAP_SERVER_HOST, geo_points)
-        webbrowser.open_new_tab(view_input_url)
-
-        with urllib.request.urlopen(trip_url) as response:
-            way_points = json.loads(response.read())['waypoints']
-            trip_points = [{'index': i, 'order': w['waypoint_index']} for i, w in enumerate(way_points)]
-            sorted_geo_points = [geo_points[p['index']] for p in sorted(trip_points, key=lambda x: x['order'])]
-            view_trip_url = build_map_url(MAP_SERVER_HOST, sorted_geo_points)
-            webbrowser.open_new_tab(view_trip_url)
+        geo_points = [re.split(r'[^0-9.-]', v) for k, v in request.form.to_dict().items() if k.startswith('point')]
+        if request.form['action'] == 'view':
+            view_input_url = build_map_url(MAP_SERVER_HOST, geo_points)
+            print(view_input_url)
+            return redirect(view_input_url)
+        elif request.form['action'] == 'optimize':
+            trip_url = build_trip_url(TRIP_SERVER_HOST, geo_points)
+            print(trip_url)
+            with urllib.request.urlopen(trip_url) as response:
+                way_points = json.loads(response.read())['waypoints']
+                trip_points = [{'index': i, 'order': w['waypoint_index']} for i, w in enumerate(way_points)]
+                sorted_geo_points = [geo_points[p['index']] for p in sorted(trip_points, key=lambda x: x['order'])]
+                view_trip_url = build_map_url(MAP_SERVER_HOST, sorted_geo_points)
+                return redirect(view_trip_url)
 
     return render_template('input_points.html', geo_points=TEST_POINTS)
 

@@ -11,6 +11,9 @@
                 </div>
             </div>
         {% endfor %}
-        <button class="btn btn-success" type="submit">Submit</button>
+        <div class="btn-toolbar my-4">
+            <button class="btn btn-primary mr-2" type="submit" name="action" value="view">View</button>
+            <button class="btn btn-success" type="submit" name="action" value="optimize">Optimize</button>
+        </div>
     </form>
 {% endblock %}
