@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h3>Input visiting points in any order:</h3>
+    <form method="post">
+        {% for point in geo_points %}
+            <div class="form-group row">
+                <label class="col-form-label" for="inputPoint{{ loop.index }}">Point {{ loop.index }}</label>
+                <div class="col">
+                    <input class="form-control" id="inputPoint{{ loop.index }}" name="point{{ loop.index }}" type="text" value="{{ point }}" />
+                </div>
+            </div>
+        {% endfor %}
+        <button class="btn btn-success" type="submit">Submit</button>
+    </form>
+{% endblock %}
