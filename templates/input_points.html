@@ -1,19 +1,53 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h3>Input visiting points in any order:</h3>
+    <h4 class="my-4">Input visiting points in any order:</h4>
     <form method="post">
         {% for point in geo_points %}
-            <div class="form-group row">
-                <label class="col-form-label" for="inputPoint{{ loop.index }}">Point {{ loop.index }}</label>
-                <div class="col">
-                    <input class="form-control" id="inputPoint{{ loop.index }}" name="point{{ loop.index }}" type="text" value="{{ point }}" />
+            <div class="form-group input-group row">
+                <div class="input-group-prepend">
+                    <span class="input-group-text p-num {{ "p-start" if loop.index0 ==0 }}">P{{ loop.index }}</span>
+                    <div class="input-group-text p-icon {{ "p-start" if loop.index0 ==0 }}"><i class="{{ "fas fa-home" if loop.index0 == 0 else "fas fa-clipboard-list" }}"></i></div>
+                </div>
+                <input class="form-control" id="inputPoint{{ loop.index }}" name="point{{ loop.index }}" type="text" value="{{ point }}" />
+                <div class="input-group-append">
+                    {% if loop.index0 != 0 %}
+                        <button disabled class="btn btn btn-outline-danger p-btn" type="button"><i class="fas fa-minus"></i></button>
+                    {% endif %}
+                    <button disabled class="btn btn btn-outline-success p-btn" type="button"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
         {% endfor %}
+        <div class="form-group input-group row">
+                <div class="input-group-prepend">
+                    <span class="input-group-text p-num p-end">P{{ geo_points|length + 1 }}</span>
+                    <div class="input-group-text p-icon p-end"><i class="fas fa-home"></i></div>
+                </div>
+                <input class="form-control p-end" disabled type="text" value="Return back to the home point" />
+        </div>
         <div class="btn-toolbar my-4">
             <button class="btn btn-primary mr-2" type="submit" name="action" value="view">View</button>
             <button class="btn btn-success" type="submit" name="action" value="optimize">Optimize</button>
         </div>
     </form>
+
+    <style>
+        .input-group-prepend {
+            text-align: center;
+        }
+        .p-num {
+            display: inline;
+            width: 50px;
+        }
+        .p-icon,.p-btn {
+            display: inline;
+            width: 45px;
+        }
+        .p-start {
+            background-color: lightgreen;
+        }
+        .p-end {
+            background-color: lightpink;
+        }
+    </style>
 {% endblock %}
