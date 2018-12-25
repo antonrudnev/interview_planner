@@ -7,7 +7,7 @@
             <div class="form-group input-group row" id="point{{ loop.index0 }}">
                 <div class="input-group-prepend">
                     <span class="input-group-text p-num" id="pointLabel{{ loop.index0 }}">P{{ loop.index }}</span>
-                    <div class="input-group-text p-icon {{ "p-start" if loop.index0 == 0 }}"><i class="{{ "fas fa-home" if loop.index0 == 0 else "fas fa-clipboard-list" }}"></i></div>
+                    <div class="input-group-text p-icon {{ "p-start" if loop.index0 == 0 }}"><i class="{{ "fas fa-home" if loop.index0 == 0 else "fas fa-user" }}"></i></div>
                 </div>
                 <input class="form-control" name="point{{ loop.index0 }}" type="text" value="{{ point }}" />
                 <div class="input-group-append">
@@ -23,7 +23,7 @@
                     <span class="input-group-text p-num">P{{ geo_points|length + 1 }}</span>
                     <div class="input-group-text p-icon p-end"><i class="fas fa-home"></i></div>
                 </div>
-                <input class="form-control p-end" disabled type="text" value="Return back to the home point" />
+                <input class="form-control p-end" disabled type="text" value="Return back" />
         </div>
         <div class="btn-toolbar my-4">
             <button class="btn btn-primary mr-2" type="submit" name="action" value="view">View</button>
@@ -50,7 +50,7 @@
                 '<div class="form-group input-group row" id="point'+numberOfPoints+'">' +
                     '<div class="input-group-prepend">' +
                         '<span class="input-group-text p-num" id="pointLabel'+numberOfPoints+'"></span>' +
-                        '<div class="input-group-text p-icon"><i class="fas fa-clipboard-list"></i></div>' +
+                        '<div class="input-group-text p-icon"><i class="fas fa-user"></i></div>' +
                     '</div>' +
                     '<input class="form-control" name="point'+numberOfPoints+'" type="text" />' +
                     '<div class="input-group-append">' +
