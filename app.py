@@ -27,7 +27,8 @@ def build_map_url(map_server_host, geo_points):
 @app.route('/', methods=['GET', 'POST'])
 def input_points():
     if request.method == "POST":
-        geo_points = [re.split(r'[^0-9.-]', v) for k, v in request.form.to_dict().items() if k.startswith('point')]
+        geo_points = [re.split(r'[^0-9.-]', v)
+                      for k, v in request.form.to_dict().items() if k.startswith('point') and v]
         if request.form['action'] == 'view':
             view_input_url = build_map_url(MAP_SERVER_HOST, geo_points)
             print(view_input_url)

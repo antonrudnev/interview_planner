@@ -2,25 +2,25 @@
 
 {% block content %}
     <h4 class="my-4">Input visiting points in any order:</h4>
-    <form method="post">
+    <form method="post" target="_blank">
         {% for point in geo_points %}
-            <div class="form-group input-group row">
+            <div class="form-group input-group row" id="point{{ loop.index0 }}">
                 <div class="input-group-prepend">
-                    <span class="input-group-text p-num {{ "p-start" if loop.index0 ==0 }}">P{{ loop.index }}</span>
-                    <div class="input-group-text p-icon {{ "p-start" if loop.index0 ==0 }}"><i class="{{ "fas fa-home" if loop.index0 == 0 else "fas fa-clipboard-list" }}"></i></div>
+                    <span class="input-group-text p-num" id="pointLabel{{ loop.index0 }}">P{{ loop.index }}</span>
+                    <div class="input-group-text p-icon {{ "p-start" if loop.index0 == 0 }}"><i class="{{ "fas fa-home" if loop.index0 == 0 else "fas fa-clipboard-list" }}"></i></div>
                 </div>
-                <input class="form-control" id="inputPoint{{ loop.index }}" name="point{{ loop.index }}" type="text" value="{{ point }}" />
+                <input class="form-control" name="point{{ loop.index0 }}" type="text" value="{{ point }}" />
                 <div class="input-group-append">
                     {% if loop.index0 != 0 %}
-                        <button disabled class="btn btn btn-outline-danger p-btn" type="button"><i class="fas fa-minus"></i></button>
+                        <button class="btn btn btn-outline-danger p-btn" type="button" onclick="deletePoint({{ loop.index0 }})"><i class="fas fa-minus"></i></button>
                     {% endif %}
-                    <button disabled class="btn btn btn-outline-success p-btn" type="button"><i class="fas fa-plus"></i></button>
+                    <button class="btn btn btn-outline-success p-btn" type="button" onclick="insertPointAfter({{ loop.index0 }})"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
         {% endfor %}
         <div class="form-group input-group row">
                 <div class="input-group-prepend">
-                    <span class="input-group-text p-num p-end">P{{ geo_points|length + 1 }}</span>
+                    <span class="input-group-text p-num">P{{ geo_points|length + 1 }}</span>
                     <div class="input-group-text p-icon p-end"><i class="fas fa-home"></i></div>
                 </div>
                 <input class="form-control p-end" disabled type="text" value="Return back to the home point" />
@@ -30,6 +30,39 @@
             <button class="btn btn-success" type="submit" name="action" value="optimize">Optimize</button>
         </div>
     </form>
+
+    <script>
+        let numberOfPoints = {{ geo_points|length }};
+
+        function renumerate() {
+            $(".p-num").each(function (i) {
+                $(this).text("P"+(i+1));
+            });
+        }
+
+        function deletePoint(pointId) {
+            $("#point" + pointId).remove();
+            renumerate();
+        };
+
+        function insertPointAfter(pointId) {
+            let newPoint =
+                '<div class="form-group input-group row" id="point'+numberOfPoints+'">' +
+                    '<div class="input-group-prepend">' +
+                        '<span class="input-group-text p-num" id="pointLabel'+numberOfPoints+'"></span>' +
+                        '<div class="input-group-text p-icon"><i class="fas fa-clipboard-list"></i></div>' +
+                    '</div>' +
+                    '<input class="form-control" name="point'+numberOfPoints+'" type="text" />' +
+                    '<div class="input-group-append">' +
+                        '<button class="btn btn btn-outline-danger p-btn" type="button" onclick="deletePoint('+numberOfPoints+')"><i class="fas fa-minus"></i></button>' +
+                        '<button class="btn btn btn-outline-success p-btn" type="button" onclick="insertPointAfter('+numberOfPoints+')"><i class="fas fa-plus"></i></button>' +
+                    '</div>' +
+                '</div>';
+            $(newPoint).insertAfter("#point"+pointId);
+            renumerate();
+            numberOfPoints++;
+        };
+    </script>
 
     <style>
         .input-group-prepend {
