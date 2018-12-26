@@ -89,7 +89,6 @@
             if ($("#"+id).val()){
                 let nochange = $("#"+id).prop("nochange");
                 if (nochange){
-                    $("#"+id).prop("nochange", false);
                     return;
                 }
                 $(':input[type="submit"]').prop('disabled', true);
