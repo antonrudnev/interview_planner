@@ -77,9 +77,9 @@
 
         function search(id) {
             $.ajax({
-                    url: "/search/"+$("#"+id).val()
+                    url: "/api/search/"+$("#"+id).val()
                 }).done(function(data) {
-                    $("#"+id).val(data["display_name"]);
+                    $("#"+id).val(data["address"]);
                     $("#geo"+id).text("GEOLOCATION: "+data["lat"]+' '+data["lon"]);
                     $("#geo_"+id).val(data["lat"]+' '+data["lon"]);
                 }).fail(function () {

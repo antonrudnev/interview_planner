@@ -3,7 +3,7 @@ import json
 import time
 from urllib.parse import quote
 import urllib.request
-from flask import Flask, jsonify, redirect, request, render_template
+from flask import abort, Flask, jsonify, redirect, request, render_template
 
 from settings import MAP_SERVER_HOST, TRIP_SERVER_HOST, TEST_POINTS
 
@@ -46,16 +46,27 @@ def input_points():
 
 
 def search_nominatim(query):
-    url = f'https://nominatim.openstreetmap.org/search/{quote(query)}?limit=1&format=json'
+    url = f'https://nominatim.openstreetmap.org/search/{quote(query)}?limit=1&addressdetails=1&countrycodes=us&format=json'
     with urllib.request.urlopen(url) as response:
         geo = json.loads(response.read())
         return geo
 
 
-@app.route('/search/<query>', methods=['GET'])
+@app.route('/api/search/<query>', methods=['GET'])
 def geocoding(query):
-    geo = search_nominatim(query)[0]
-    return jsonify({"lat": geo["lat"], "lon": geo["lon"], "display_name": geo["display_name"]})
+    geo = search_nominatim(query)
+    if len(geo) > 0:
+        location = geo[0]
+        lat = location['lat']
+        lon = location['lon']
+        address = location['address']
+        display_address = ', '.join([address.get('house_number', ''),
+                                     address.get('road', ''),
+                                     address.get('city', ''),
+                                     address.get('state', '')])
+        return jsonify({'lat': lat, 'lon': lon, 'address': display_address})
+    else:
+        abort(404)
 
 
 if __name__ == '__main__':
