@@ -46,7 +46,8 @@ def input_points():
 
 
 def search_nominatim(query):
-    url = f'https://nominatim.openstreetmap.org/search/{quote(query)}?limit=1&addressdetails=1&countrycodes=us&format=json'
+    quoted = quote(query)
+    url = f'https://nominatim.openstreetmap.org/search/{quoted}?limit=1&addressdetails=1&countrycodes=us&format=json'
     with urllib.request.urlopen(url) as response:
         geo = json.loads(response.read())
         return geo
@@ -54,18 +55,19 @@ def search_nominatim(query):
 
 @app.route('/api/search/<query>', methods=['GET'])
 def geocoding(query):
-    geo = search_nominatim(query)
-    if len(geo) > 0:
-        location = geo[0]
+    try:
+        location = search_nominatim(query)[0]
         lat = location['lat']
         lon = location['lon']
         address = location['address']
-        display_address = ', '.join([address.get('house_number', ''),
-                                     address.get('road', ''),
-                                     address.get('city', ''),
-                                     address.get('state', '')])
+        if address['state'] != 'D.C.':
+            raise Exception('Only DC is supported now')
+        display_address = ', '.join(p for p in [address.get('house_number'),
+                                                address.get('road'),
+                                                address.get('city'),
+                                                address.get('state')] if p)
         return jsonify({'lat': lat, 'lon': lon, 'address': display_address})
-    else:
+    except Exception:
         abort(404)
 
 

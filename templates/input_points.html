@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h4 class="my-4">Input visiting points in any order:</h4>
+    <h4 class="my-4">Input visiting points:</h4>
     <form method="post" target="_blank">
         {% for point in geo_points %}
             <div class="form-group" id="point{{ loop.index0 }}">
-                <div class="input-group row">
+                <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text p-num" id="pointLabel{{ loop.index0 }}">P{{ loop.index }}</span>
+                        <span class="input-group-text p-num d-none d-sm-block" id="pointLabel{{ loop.index0 }}">P{{ loop.index }}</span>
                         <div class="input-group-text p-icon {{ "p-start" if loop.index0 == 0 }}"><i class="{{ "fas fa-home" if loop.index0 == 0 else "fas fa-user" }}"></i></div>
                     </div>
                     <input class="form-control" id="{{ loop.index0 }}" type="text" value="{{ point['name'] }}" onkeypress="searchpress(event, this)" />
@@ -16,7 +16,7 @@
                             <button class="btn btn btn-outline-danger p-btn" type="button" onclick="deletePoint({{ loop.index0 }})" tabindex="-1"><i class="fas fa-minus"></i></button>
                         {% endif %}
                         <button class="btn btn btn-outline-success p-btn" type="button" onclick="insertPointAfter({{ loop.index0 }})" tabindex="-1"><i class="fas fa-plus"></i></button>
-                        <button class="btn btn btn-outline-primary p-btn" type="button" onclick="search({{ loop.index0 }})" tabindex="-1"><i class="fas fa-search"></i></button>
+                        <button class="btn btn btn-outline-primary p-btn d-none d-sm-block" type="button" onclick="search({{ loop.index0 }})" tabindex="-1"><i class="fas fa-search"></i></button>
                     </div>
                 </div>
                 <small class="form-text text-muted text-monospace" id="geo{{ loop.index0 }}"></small>
@@ -24,9 +24,9 @@
             </div>
         {% endfor %}
         <div class="form-group">
-            <div class="input-group row">
+            <div class="input-group">
                 <div class="input-group-prepend">
-                    <span class="input-group-text p-num">P{{ geo_points|length + 1 }}</span>
+                    <span class="input-group-text p-num d-none d-sm-block">P{{ geo_points|length + 1 }}</span>
                     <div class="input-group-text p-icon p-end"><i class="fas fa-home"></i></div>
                 </div>
                 <input class="form-control p-end" disabled type="text" value="Return back" />
@@ -55,16 +55,16 @@
         function insertPointAfter(pointId) {
             let newPoint =
                 '<div class="form-group" id="point'+numberOfPoints+'">' +
-                    '<div class="input-group row">' +
+                    '<div class="input-group">' +
                         '<div class="input-group-prepend">' +
-                            '<span class="input-group-text p-num" id="pointLabel'+numberOfPoints+'"></span>' +
+                            '<span class="input-group-text p-num d-none d-sm-block" id="pointLabel'+numberOfPoints+'"></span>' +
                             '<div class="input-group-text p-icon"><i class="fas fa-user"></i></div>' +
                         '</div>' +
                         '<input class="form-control" id="'+numberOfPoints+'" type="text" onkeypress="searchpress(event, this)" />' +
                         '<div class="input-group-append">' +
                             '<button class="btn btn btn-outline-danger p-btn" type="button" onclick="deletePoint('+numberOfPoints+')"><i class="fas fa-minus"></i></button>' +
                             '<button class="btn btn btn-outline-success p-btn" type="button" onclick="insertPointAfter('+numberOfPoints+')"><i class="fas fa-plus"></i></button>' +
-                            '<button class="btn btn btn-outline-primary p-btn" type="button" onclick="search('+numberOfPoints+')" tabindex="-1"><i class="fas fa-search"></i></button>' +
+                            '<button class="btn btn btn-outline-primary p-btn d-none d-sm-block" type="button" onclick="search('+numberOfPoints+')" tabindex="-1"><i class="fas fa-search"></i></button>' +
                         '</div>' +
                     '</div>' +
                     '<small class="form-text text-muted" id="geo'+numberOfPoints+'"></small>' +
@@ -83,7 +83,7 @@
                     $("#geo"+id).text("GEOLOCATION: "+data["lat"]+' '+data["lon"]);
                     $("#geo_"+id).val(data["lat"]+' '+data["lon"]);
                 }).fail(function () {
-                    $("#geo"+id).text("GEOLOCATION IS UNDEFINED");
+                    $("#geo"+id).html("UNDEFINED GEOLOCATION<br>ONLY DC IS SUPPORTED NOW");
                     $("#geo_"+id).val("");
                 });
         }
