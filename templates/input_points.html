@@ -8,10 +8,15 @@
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text p-num d-none d-sm-block" id="pointLabel{{ loop.index0 }}">P{{ loop.index }}</span>
-                        <div class="input-group-text p-icon {{ "p-start" if loop.index0 == 0 }}"><i class="{{ "fas fa-home" if loop.index0 == 0 else "fas fa-user" }}"></i></div>
+                        <div id="icon{{ loop.index0 }}" class="input-group-text justify-content-center p-icon {{ "p-start" if loop.index0 == 0 }}"><i class="{{ "fas fa-home" if loop.index0 == 0 else "fas fa-user" }}"></i></div>
+                        <div hidden class="spinner-box justify-content-center" id="spinner{{ loop.index0 }}">
+                            <div class="spinner-border text-secondary mt-1" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
                     </div>
-                    <input class="form-control" id="{{ loop.index0 }}" type="text" value="{{ point['name'] }}" onkeypress="searchpress(event, this)" />
-                    <div class="input-group-append">
+                    <input class="form-control" id="{{ loop.index0 }}" type="text" value="{{ point['name'] }}" onchange="search({{ loop.index0 }})" onkeypress="searchpress(event, this)" />
+                    <div id="control{{ loop.index0 }}" class="input-group-append">
                         {% if loop.index0 != 0 %}
                             <button class="btn btn btn-outline-danger p-btn" type="button" onclick="deletePoint({{ loop.index0 }})" tabindex="-1"><i class="fas fa-minus"></i></button>
                         {% endif %}
@@ -23,7 +28,7 @@
                 <input type="hidden" id="geo_{{ loop.index0 }}" name="point{{ loop.index0 }}" value="{{ point['geolocation'] }}" />
             </div>
         {% endfor %}
-        <div class="form-group">
+        <div class="form-group d-none d-sm-block">
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text p-num d-none d-sm-block">P{{ geo_points|length + 1 }}</span>
@@ -58,12 +63,17 @@
                     '<div class="input-group">' +
                         '<div class="input-group-prepend">' +
                             '<span class="input-group-text p-num d-none d-sm-block" id="pointLabel'+numberOfPoints+'"></span>' +
-                            '<div class="input-group-text p-icon"><i class="fas fa-user"></i></div>' +
+                            '<div id="icon'+numberOfPoints+'" class="input-group-text p-icon"><i class="fas fa-user"></i></div>' +
+                            '<div hidden class="spinner-box justify-content-center" id="spinner'+numberOfPoints+'">' +
+                                '<div class="spinner-border text-secondary mt-1" role="status">' +
+                                    '<span class="sr-only">Loading...</span>' +
+                                '</div>' +
+                            '</div>' +
                         '</div>' +
-                        '<input class="form-control" id="'+numberOfPoints+'" type="text" onkeypress="searchpress(event, this)" />' +
-                        '<div class="input-group-append">' +
-                            '<button class="btn btn btn-outline-danger p-btn" type="button" onclick="deletePoint('+numberOfPoints+')"><i class="fas fa-minus"></i></button>' +
-                            '<button class="btn btn btn-outline-success p-btn" type="button" onclick="insertPointAfter('+numberOfPoints+')"><i class="fas fa-plus"></i></button>' +
+                        '<input class="form-control" id="'+numberOfPoints+'" type="text" onchange="search('+numberOfPoints+')" onkeypress="searchpress(event, this)" />' +
+                        '<div id="control'+numberOfPoints+'" class="input-group-append">' +
+                            '<button class="btn btn btn-outline-danger p-btn" type="button" onclick="deletePoint('+numberOfPoints+')" tabindex="-1"><i class="fas fa-minus"></i></button>' +
+                            '<button class="btn btn btn-outline-success p-btn" type="button" onclick="insertPointAfter('+numberOfPoints+')" tabindex="-1"><i class="fas fa-plus"></i></button>' +
                             '<button class="btn btn btn-outline-primary p-btn d-none d-sm-block" type="button" onclick="search('+numberOfPoints+')" tabindex="-1"><i class="fas fa-search"></i></button>' +
                         '</div>' +
                     '</div>' +
@@ -76,16 +86,27 @@
         }
 
         function search(id) {
-            $.ajax({
-                    url: "/api/search/"+$("#"+id).val()
-                }).done(function(data) {
-                    $("#"+id).val(data["address"]);
-                    $("#geo"+id).text("GEOLOCATION: "+data["lat"]+' '+data["lon"]);
-                    $("#geo_"+id).val(data["lat"]+' '+data["lon"]);
-                }).fail(function () {
-                    $("#geo"+id).html("UNDEFINED GEOLOCATION<br>ONLY DC IS SUPPORTED NOW");
-                    $("#geo_"+id).val("");
+            if ($("#"+id).val()){
+                $(':input[type="submit"]').prop('disabled', true);
+                $("#control"+id).hide();
+                $("#icon"+id).hide();
+                $("#spinner"+id).removeAttr("hidden");
+                $.ajax({
+                        url: "/api/search/"+$("#"+id).val()
+                    }).done(function(data) {
+                        $("#"+id).val(data["address"]);
+                        $("#geo"+id).text("GEOLOCATION: "+data["lat"]+' '+data["lon"]);
+                        $("#geo_"+id).val(data["lat"]+' '+data["lon"]);
+                    }).fail(function () {
+                        $("#geo"+id).html("UNDEFINED GEOLOCATION<br>ONLY DC IS SUPPORTED NOW");
+                        $("#geo_"+id).val("");
+                    }).always(function () {
+                        $("#spinner"+id).attr("hidden", "");
+                        $("#icon"+id).show();
+                        $("#control"+id).show();
+                        $(':input[type="submit"]').prop('disabled', false);
                 });
+            }
         }
         
         function searchpress(event, t) {
@@ -101,11 +122,9 @@
             text-align: center;
         }
         .p-num {
-            display: inline;
             width: 50px;
         }
-        .p-icon,.p-btn {
-            display: inline;
+        .p-icon,.p-btn,.spinner-box {
             width: 45px;
         }
         .p-start {

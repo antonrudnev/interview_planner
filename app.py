@@ -1,13 +1,16 @@
 import re
 import json
 import time
-from urllib.parse import quote
 import urllib.request
+from threading import Lock
 from flask import abort, Flask, jsonify, redirect, request, render_template
+from urllib.parse import quote
 
 from settings import MAP_SERVER_HOST, TRIP_SERVER_HOST, TEST_POINTS
 
 app = Flask(__name__)
+
+lock = Lock()
 
 
 def build_trip_url(trip_server_host, geo_points):
@@ -48,9 +51,14 @@ def input_points():
 def search_nominatim(query):
     quoted = quote(query)
     url = f'https://nominatim.openstreetmap.org/search/{quoted}?limit=1&addressdetails=1&countrycodes=us&format=json'
-    with urllib.request.urlopen(url) as response:
-        geo = json.loads(response.read())
-        return geo
+    lock.acquire()
+    try:
+        with urllib.request.urlopen(url) as response:
+            geo = json.loads(response.read())
+            time.sleep(1)
+            return geo
+    finally:
+        lock.release()
 
 
 @app.route('/api/search/<query>', methods=['GET'])
@@ -67,7 +75,7 @@ def geocoding(query):
                                                 address.get('city'),
                                                 address.get('state')] if p)
         return jsonify({'lat': lat, 'lon': lon, 'address': display_address})
-    except Exception:
+    except Exception as e:
         abort(404)
 
 
