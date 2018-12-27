@@ -92,7 +92,7 @@
                     return;
                 }
                 $(':input[type="submit"]').prop('disabled', true);
-                $("#control"+id).hide();
+                $("#control"+id+" *").prop('disabled', true);
                 $("#icon"+id).hide();
                 $("#spinner"+id).removeAttr("hidden");
                 $.ajax({
@@ -112,7 +112,7 @@
                         $("#"+id).prop("nochange", true);
                         $("#spinner"+id).attr("hidden", "");
                         $("#icon"+id).show();
-                        $("#control"+id).show();
+                        $("#control"+id+" *").prop('disabled', false);
                         $(':input[type="submit"]').prop('disabled', false);
                 });
             }
