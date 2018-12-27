@@ -2,7 +2,7 @@ import re
 import json
 import time
 import urllib.request
-from threading import Lock
+from filelock import FileLock
 from flask import abort, Flask, jsonify, redirect, request, render_template
 from urllib.parse import quote
 
@@ -10,7 +10,7 @@ from settings import MAP_SERVER_HOST, TRIP_SERVER_HOST, TEST_POINTS
 
 app = Flask(__name__)
 
-lock = Lock()
+lock = FileLock("lock")
 
 
 def build_trip_url(trip_server_host, geo_points):
@@ -75,7 +75,7 @@ def geocoding(query):
                                                 address.get('city'),
                                                 address.get('state')] if p)
         return jsonify({'lat': lat, 'lon': lon, 'address': display_address})
-    except Exception as e:
+    except:
         abort(404)
 
 
