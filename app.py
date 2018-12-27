@@ -68,7 +68,7 @@ def geocoding(query):
         if address['state'] != 'D.C.':
             raise Exception('Only DC is supported now')
         display_address = ', '.join(p for p in [address.get('house_number'),
-                                                address.get('road'),
+                                                address.get('road', address.get('pedestrian')),
                                                 address.get('city'),
                                                 address.get('state')] if p)
         return jsonify({'lat': lat, 'lon': lon, 'address': display_address})
