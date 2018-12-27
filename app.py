@@ -51,14 +51,11 @@ def input_points():
 def search_nominatim(query):
     quoted = quote(query)
     url = f'https://nominatim.openstreetmap.org/search/{quoted}?limit=1&addressdetails=1&countrycodes=us&format=json'
-    lock.acquire()
-    try:
+    with lock:
         with urllib.request.urlopen(url) as response:
             geo = json.loads(response.read())
             time.sleep(1)
             return geo
-    finally:
-        lock.release()
 
 
 @app.route('/api/search/<query>', methods=['GET'])
