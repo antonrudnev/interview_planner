@@ -67,10 +67,10 @@ def geocoding(query):
         address = location['address']
         if address['state'] not in ['D.C.', 'Maryland', 'Virginia']:
             raise Exception('Only DC, MD, and VA are supported now')
-        display_address = ', '.join(p for p in [address.get('house_number', next(iter(address.values()))),
-                                                address.get('road', address.get('pedestrian')),
-                                                address.get('city', address.get('locality')),
-                                                address.get('state')] if p)
+        display_address = ', '.join(p for p in [address.pop('house_number', address.pop(next(iter(address.keys())))),
+                                                address.pop('road', address.pop('pedestrian')),
+                                                address.pop('city', address.pop('locality')),
+                                                address.pop('state')] if p)
         return jsonify({'lat': lat, 'lon': lon, 'address': display_address})
     except:
         abort(404)
