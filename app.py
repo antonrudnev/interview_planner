@@ -67,7 +67,7 @@ def geocoding(query):
         address = location['address']
         if address['state'] not in ['D.C.', 'Maryland', 'Virginia']:
             raise Exception('Only DC, MD, and VA are supported now')
-        display_address = ', '.join(p for p in [address.get('house_number', address.get('attraction')),
+        display_address = ', '.join(p for p in [address.get('house_number', next(iter(address.values()))),
                                                 address.get('road', address.get('pedestrian')),
                                                 address.get('city', address.get('locality')),
                                                 address.get('state')] if p)
