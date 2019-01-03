@@ -1,16 +1,26 @@
-import re
 import json
+import logging
+import re
 import time
 import urllib.request
-from filelock import FileLock
-from flask import abort, Flask, jsonify, redirect, request, render_template
 from urllib.parse import quote
 
-from settings import MAP_SERVER_HOST, TRIP_SERVER_HOST, TEST_POINTS
+from flask import Flask, abort, jsonify, redirect, render_template, request
+
+from filelock import FileLock
+from settings import MAP_SERVER_HOST, TEST_POINTS, TRIP_SERVER_HOST
 
 app = Flask(__name__)
 
 lock = FileLock("lock")
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+ch = logging.FileHandler('usage.log')
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(clientip)s - %(httpmethod)s - %(message)s, %(useragent)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 
 def build_trip_url(trip_server_host, geo_points):
@@ -31,7 +41,12 @@ def build_map_url(map_server_host, geo_points):
 
 @app.route('/', methods=['GET', 'POST'])
 def input_points():
+    logger.info(f'Open start page',
+                extra={'clientip': request.remote_addr, 'httpmethod': request.method, 'useragent': request.user_agent})
     if request.method == "POST":
+        logger.info(f'Invoked "{request.form["action"]}"',
+                    extra={'clientip': request.remote_addr, 'httpmethod': request.method,
+                           'useragent': request.user_agent})
         geo_points = [re.split(r'[^0-9.-]', v)
                       for k, v in request.form.to_dict().items() if k.startswith('point') and v]
         if request.form['action'] == 'view':
@@ -61,6 +76,8 @@ def search_nominatim(query):
 @app.route('/api/search/<query>', methods=['GET'])
 def geocoding(query):
     try:
+        logger.info(f'Geocoding for "{query}"', extra={'clientip': request.remote_addr, 'httpmethod': request.method,
+                                                       'useragent': request.user_agent})
         location = search_nominatim(query)[0]
         lat = location['lat']
         lon = location['lon']
