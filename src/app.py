@@ -82,8 +82,8 @@ def geocoding(query):
         lat = location['lat']
         lon = location['lon']
         address = location['address']
-        if address['state'] not in ['D.C.', 'Maryland', 'Virginia']:
-            raise Exception('Only DC, MD, and VA are supported now')
+#        if address['state'] not in ['D.C.', 'Maryland', 'Virginia']:
+#            raise Exception('Only DC, MD, and VA are supported now')
         display_address = ', '.join(p for p in [address.pop('house_number',
                                                             address.pop(next(iter(address.keys())), None)),
                                                 address.pop('road', address.pop('pedestrian', None)),
@@ -96,3 +96,4 @@ def geocoding(query):
 
 if __name__ == '__main__':
     app.run()
+

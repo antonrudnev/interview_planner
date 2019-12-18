@@ -1,0 +1,22 @@
+version: "3.7"
+services:
+
+  web:
+    image: interview_planner
+    build: src/.
+    network_mode: host
+
+  osrm_backend:
+    image: osrm_backend
+    build: 
+      context: osrm/.
+      args:
+        map_url: https://download.geofabrik.de/north-america/us/district-of-columbia-latest.osm.pbf
+    ports:
+      - "5000:5000"
+
+  osrm_frontend:
+    image: osrm/osrm-frontend
+    ports:
+      - "9966:9966"
+
