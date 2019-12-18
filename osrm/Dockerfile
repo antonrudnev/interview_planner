@@ -18,3 +18,4 @@ EXPOSE 5000
 WORKDIR /opt
 
 CMD /usr/local/bin/osrm-routed --algorithm mld /data/map.osrm
+

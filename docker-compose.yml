@@ -2,12 +2,13 @@ version: "3.7"
 services:
 
   web:
-    image: interview_planner
+    image: interview-planner
     build: src/.
-    network_mode: host
+    ports:
+      - "5050:5000"
 
   osrm_backend:
-    image: osrm_backend
+    image: osrm-backend
     build: 
       context: osrm/.
       args:
