@@ -1,0 +1,3 @@
+https://download.geofabrik.de/north-america/us/district-of-columbia-latest.osm.pbf
+https://download.geofabrik.de/north-america/us/maryland-latest.osm.pbf
+https://download.geofabrik.de/north-america/us/virginia-latest.osm.pbf
