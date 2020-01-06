@@ -3,8 +3,6 @@ FROM osrm/osrm-backend:v5.22.0 as prep
 RUN apt-get update && \
     apt-get install -y --no-install-recommends wget ca-certificates osmium-tool 
 
-RUN mkdir -p /data
-
 WORKDIR /data
 
 COPY urls.txt .

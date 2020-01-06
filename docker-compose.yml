@@ -3,7 +3,7 @@ services:
 
   web:
     image: interview-planner
-    build: src/.
+    build: webapp/.
     ports:
       - "5050:5000"
 
