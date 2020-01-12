@@ -1,4 +1,4 @@
-MAP_SERVER_HOST = 'http://localhost:9966'
+MAP_SERVER_HOST = '/map'
 TRIP_SERVER_HOST = 'http://osrm_backend:5000'
 
 TEST_POINTS = [{'name': '1000, Thomas Jefferson St NW, Georgetown, Washington, D.C.', 'geolocation': '38.902815 -77.060595'},

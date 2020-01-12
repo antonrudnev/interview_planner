@@ -4,20 +4,20 @@ services:
   web:
     image: interview-planner
     build: webapp/.
-    ports:
-      - "5050:5000"
 
   osrm_backend:
     image: osrm-backend
-    build: 
-      context: osrm/.
-      args:
-        map_url: https://download.geofabrik.de/north-america/us/district-of-columbia-latest.osm.pbf
-    ports:
-      - "5000:5000"
+    build: osrm/.
 
   osrm_frontend:
     image: osrm/osrm-frontend
+    environment:
+      - OSRM_BACKEND=/osrm
+
+  nginx:
+    image: nginx:1.17
     ports:
-      - "9966:9966"
+      - "80:80"
+    volumes:
+      - "./nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
 
