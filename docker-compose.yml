@@ -13,6 +13,7 @@ services:
     image: osrm/osrm-frontend
     environment:
       - OSRM_BACKEND=/osrm
+      - OSRM_CENTER=38.9134,-77.0118
 
   nginx:
     image: nginx:1.17
